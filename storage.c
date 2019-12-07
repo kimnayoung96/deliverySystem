@@ -100,14 +100,25 @@ int str_backupSystem(char* filepath) {		//현재 보관함들의 상태 및 설정 값들을 파
 	char passwd;
 	char *context;
 
+	int i, j;
 
 	FILE *fp;
 	
 	
 	fp = fopen(filepath, "w");  //쓰기 모드로 열어서  
+	
+	
 	fprintf(fp,"%d %d\n",systemSize[0],systemSize[1]); //우선 첫 행에 행과 열을 출력 
 	fprintf(fp,"%d\n",masterPassword);                 //masterPasswd를 출력  
-	fprintf(fp,"%d %d %d %d %s %s\n",systemSize[0],systemSize[1],room, passwd, *context);  //fprintf 사용해서 다시 파일 쓰기
+	
+	for(i = 0; i < systemSize[0] ; i++ )
+	{
+		for(j = 0; j< systemSize[1]; i++)
+		{
+			fprintf(fp,"%d %d %d %d %s %s\n",i,j,room, passwd, *context);  //fprintf 사용해서 다시 파일 쓰기
+		}
+ 	}
+
 	fclose(fp); //파일 포인터 닫기  
 	 
 	
@@ -124,13 +135,21 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 	 
 	int i;
 
-	  
+	 //  첫 행 정도(4,6)을 받아들인 다음에  그 크기만큼 storage_t  크기의 공간을 동적으로 할당받기    
 	deliverySystem = (struct storage_t **)malloc(systemSize[0]*sizeof(storage_t*));         	  //system[0]에 row를 저장
 	
 	for(i=0; i<systemSize[0] ; i++)
 	{
 		deliverySystem = (struct storage_t *)malloc(systemSize[1]*sizeof(storage_t));			 //system[1]에 column을 저장 
 	}
+	
+	if(fp == NULL){
+		
+		return;
+	}
+	
+	deliverySystem -> 
+	strcpy(deliverySystem -> systemSize[0],"")
 	
 		
 	if()
@@ -148,11 +167,13 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 //free the memory of the deliverySystem 
        //str_createSystem(cahr *filepath)함수의 경우에는 먼저 입력으로 들어온 filepath에 해당하는 파일을 
                  //입출력 함수를 이용해서  읽어들이고 그 안에서 deliverSystem의 크기에 해당하는
-				     //  첫 행 정도(4,6)을 받아들인 다음에  그 크기만큼 storage_t  크기의 공간을 동적으로 할당받기  
+				    
 void str_freeSystem(void) {		//택배보관함 자료구조 메모리 해제  
+	char* filepath;
+	//context 포인터에 대해서도 해제 
+	// 
 	
-	
-	free(filepath)
+	free(filepath);
 }
 
 
@@ -214,16 +235,29 @@ int str_checkStorage(int x, int y) {
 //char passwd[] : password string (4 characters)
 //return : 0 - successfully put the package, -1 - failed to put
 int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_SIZE+1], char passwd[PASSWD_LEN+1]) { //특정 보관함에 택배 넣기 
-	int x,y;
-	int nBuilding, nRoom; 
-	char msg;
-		//어느 위치에 넣을지 입력하기  
+	
+	char msg[MAX_MSG_SIZE+1];
+	char passwd[PASSWD_LEN+1];
+	
+	FILE *fp; 
+	                	//어느 위치에 넣을지 입력하기  
+	fp = fopen(fp,"systemSize[i]");
+	
+	
+	                  
+	//어디에 넣을 것인지 입력하고 나면 그 자리에 들어갈 수 있는지 먼저 확인				     
+	if(deliverySystem[x][y] == NULL)               //내가 넣고자 하는 보관함이 비어있다면   
+	{	
+		deliverySystem[x][y].building;   //내가 입력한 building#가 txt파일에 쓰여지고 
+		deliverySystem[x][y].room;       //내가 입력한 room #가 txt파일에 쓰여지고  
+	 	deliverySystem[x][y].msg;        //내가 입력한 message가 txt파일에 쓰여지고  
+		deliverySystem[x][y].passwd;	 //내가 입력한 passwd가 txt파일에 쓰여짐  
+		deliverySystem[x][y].cnt++;      //성공적으로 택배가 넣어졌다면  
 		
-	if()
-	{
 		return 0;                   //만약 성공적으로 택배보관함에 택배가 넣어졌다면 return 0
+	
 	}
-	else if()
+	else if(deliverySystem[x][y] != NULL)         //내가 넣고자 하는 보관함이 이미 차있다면   
 	{
 		return -1;                 //택배보관함에 택배가 성공적으로 들어가지 않았다면 return -1 
 	}
@@ -239,27 +273,20 @@ int str_extractStorage(int x, int y) {		//특정 보관함에서 내 택배 꺼냄
 	
 	
 	
-	
-	
-	//비밀번호 처리 과정  
-	if(strcmp(dde) == 0)                 //비밀번호를 txt에서 긁어와서 내가 입력한 비밀번호랑 같은지 비교해서 같으면 0 반환   
-	{	
-		return 0;
-	}
-	
-	else if(strcmp() == masterPasswd){
-		return 0;
-	}
-	else    //txt에서 긁어온 비밀번호(진짜 비밀번호)와 내가 입력한 비밀번호가 같이 않으면 return -1 
+	//비밀번호 처리 과정과 택배 보낼 때 문구 뜨게하기  
+	if(inputPasswd(int x, int y) !=  0 )             //내가 입력한 passwd가 틀리면  
 	{
+		printf("------------>password is wrong!!\n");
 		return -1;
+		
 	}
-	 
-	//택배 꺼낼 때 내가 입력해놓았던 문구가 함께 출력됨 
-	strcpy()
-	while((c = fgetc(fp)) != EOF) //파일 끝이 아니면 반복해서 C에 글자 하나를 읽어서 저장.....? 
-	                                          
-	
+ 	else                                            //내가 입력한 passwd가 맞으면  
+ 	{	
+ 		printStorageInside(int x, int y);            
+		storedCnt--;                               //저장되어있던 보관함 하나가 비워지니까 -1해주기  
+		return 0;
+	}		
+
 }
 
 //find my package from the storage
