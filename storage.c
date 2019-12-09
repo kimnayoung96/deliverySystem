@@ -61,7 +61,7 @@ static void initStorage(int x, int y) {              //특정 보관함 하나를 초기화
 //		{
 			deliverySystem[x][y].cnt = 0;
 			
-//		}	
+//		}
 //	}
 	
 }
@@ -75,13 +75,14 @@ static int inputPasswd(int x, int y) {             //특정 보관함에 대해 비밀번호
 	
 	printf("-Input Password for (%d,%d) storage: ",x,y);
 	
-	if(strcmp(userPasswd,deliverySystem[x][y].passwd)==0||strcmp(userPasswd,masterPasswd)==0) // 
+	if(strcmp(userPasswd,deliverySystem[x][y].passwd)==0||strcmp(userPasswd,masterPassword)==0) // userPasswd랑  passwd랑 같은지 비교하고, userPasswd랑 masterPasswd랑 같은지 
+	                                                                                                 //비교해서 만약 같다면  retuen 0
 	{
 		return 0;
 	}
 	else
 	{
-		return -1;
+		return -1;																		      //위의 경우가 아니라면 return -1 
 	}
 	
 	
@@ -136,7 +137,12 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 
 
 	int i,j;
-
+	char *context; 
+	
+	//context에 동적할당  
+	context = (char*)malloc(sizeof(char));
+	
+	
 	 //  첫 행 정도(4,6)을 받아들인 다음에  그 크기만큼 storage_t  크기의 공간을 동적으로 할당받기    
 	deliverySystem = (struct storage_t **)malloc(systemSize[0]*sizeof(storage_t*));         	  //system[0]에 row를 저장
 	
@@ -146,15 +152,17 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 	}
 	
 	
+
+	
 	//context도 동적할당 
-	for(i=0; i<systemSize[0] ; i++)
+/*	for(i=0; i<systemSize[0] ; i++)
 	{
 		for(j=0;j<systemSize[1];j++)
 		{
 			deliverySystem[i][j].context       //이걸 동적할당  
 		}
 	} 
-	
+*/	
 /*	if(fp == NULL){
 		
 		return;
@@ -186,7 +194,7 @@ void str_freeSystem(void) {		//택배보관함 자료구조 메모리 해제
 	
 	for(i = 0; systemSize[0]; i++)
 	{
-		for(j=0; systemSize][1]; j++)
+		for(j=0; systemSize[1]; j++)
 		{
 			free(deliverySystem[i][j].context);
 		}
@@ -258,19 +266,21 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 	//char msg[MAX_MSG_SIZE+1];
 	//char passwd[PASSWD_LEN+1];
 	 
-	//어디에 넣을 것인지 입력하고 나면 그 자리에 들어갈 수 있는지 먼저 확인				     
-	if(deliverySystem[x][y] == NULL)               //내가 넣고자 하는 보관함이 비어있다면   
+	//어디에 넣을 것인지 입력하고 나면 그 자리에 들어갈 수 있는지 먼저 확인				        //뭔가 들어있으면 1,비어있으면 0으로 생각  
+	//if(deliverySystem[x][y] == NULL)               //내가 넣고자 하는 보관함이 비어있다면   
+	if(deliverySystem[x][y].cnt == 0) // 
 	{	
 		deliverySystem[x][y].building=nBuilding;   //내가 입력한 building#가 txt파일에 쓰여지고 
 		deliverySystem[x][y].room=nRoom;       //내가 입력한 room #가 txt파일에 쓰여지고  
-	 	deliverySystem[x][y].msg=msg;        //내가 입력한 message가 txt파일에 쓰여지고  
+	 	deliverySystem[x][y].context=msg;        //내가 입력한 message가 txt파일에 쓰여지고  
 		deliverySystem[x][y].passwd=passwd;	 //내가 입력한 passwd가 txt파일에 쓰여짐  
 		deliverySystem[x][y].cnt++;      //성공적으로 택배가 넣어졌다면  
 		
 		return 0;                   //만약 성공적으로 택배보관함에 택배가 넣어졌다면 return 0
 	
 	}
-	else if(deliverySystem[x][y] != NULL)         //내가 넣고자 하는 보관함이 이미 차있다면   
+	//else if(deliverySystem[x][y] != NULL)         //내가 넣고자 하는 보관함이 이미 차있다면   
+	else 
 	{
 		return -1;                 //택배보관함에 택배가 성공적으로 들어가지 않았다면 return -1 
 	}
@@ -286,7 +296,7 @@ int str_extractStorage(int x, int y) {		//특정 보관함에서 내 택배 꺼냄
 	
 	
 	
-	//비밀번호 처리 과정과 택배 보낼 때 문구 뜨게하기  
+	//비밀번호 처리 과정과 택배 보낼 때 문구 뜨게하기    
 	if(inputPasswd(int x, int y) !=  0 )             //내가 입력한 passwd가 틀리면  
 	{
 		printf("------------>password is wrong!!\n");
@@ -314,10 +324,10 @@ int str_findStorage(int nBuilding, int nRoom) {		//내 택배가 있는 보관함 찾기
 	int i,j;
 	int x,y;
 	
-	deliverySystem[x][y].building;
+	deliverySystem[x][y].building;      
 	
 	
-	if(deliverySystem[x][y].building == nBuilding)
+	if(deliverySystem[x][y].building == nBuilding)           
 	{ 
 		deliverySystem[x][y].room;	
 		printf("------------>Found package in (%d,%d)\n",systemSize[i],systemSize[j]);
@@ -326,7 +336,7 @@ int str_findStorage(int nBuilding, int nRoom) {		//내 택배가 있는 보관함 찾기
 	
 	else if(deliverySystem[x][y] != nBuilding)
 	{
-		
+		deliverySystem[x][y].room;
 	}
 	
 	
