@@ -135,7 +135,12 @@ int str_backupSystem(char* filepath) {		//현재 보관함들의 상태 및 설정 값들을 파
 //return : 0 - successfully created, -1 - failed to create the system
 int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 
-
+	FILE *fp;
+	
+	fp = fopen(filepath,"r");
+	
+	int x,y;//x:row y:column
+	
 	int i,j;
 	char *context; 
 	
@@ -144,14 +149,35 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 	
 	
 	 //  첫 행 정도(4,6)을 받아들인 다음에  그 크기만큼 storage_t  크기의 공간을 동적으로 할당받기    
-	deliverySystem = (struct storage_t **)malloc(systemSize[0]*sizeof(storage_t*));         	  //system[0]에 row를 저장
+	deliverySystem = (storage_t **)malloc(systemSize[0]*sizeof(struct storage_t*));         	  //system[0]에 row를 저장
 	
 	for(i=0; i<systemSize[0] ; i++)
 	{
-		deliverySystem = (struct storage_t *)malloc(systemSize[1]*sizeof(storage_t));			 //system[1]에 column을 저장 
+		deliverySystem = ( storage_t *)malloc(systemSize[1]*sizeof(storage_t));			 //system[1]에 column을 저장 
 	}
 	
+	//FILE fp;
 	
+	//fp = fopen(*filepath,"r");
+	
+	fscanf(fp, "%d %d",&systemSize[0],&systemSize[1]); 
+	fcanf(fp,"%s", masterPassword);
+	
+	while(fgetc(FILE *fp) != EOF)/*파일이  끝날 때 까지 */
+	{
+		fscanf(fp,"%d %d ",&x,&y) ;
+		fscanf(fp,"%d %d ",&deliverySystem[x][y].building,&deliverySystem[x][y].room);
+		fscanf(fp,"%d", &deliverySystem[x][y].passwd);
+		fscanf(fp,"%s",&deliverySystem[x][y].context);
+		
+		//위와 같이 비밀먼호, context받아주기 
+		//while문 돌아갈때마다 
+		storedCnt++; 
+		
+	}
+	
+	fclose(fp);	
+}
 
 	
 	//context도 동적할당 
@@ -182,7 +208,7 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 	}
 	
 	*/
-}
+
 
 //free the memory of the deliverySystem 
        //str_createSystem(cahr *filepath)함수의 경우에는 먼저 입력으로 들어온 filepath에 해당하는 파일을 

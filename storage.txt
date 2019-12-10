@@ -1,7 +1,2 @@
-4 6
-1234
-0 0 3 103 1234 noPassword
-0 2 4 710 3923 sookmyung
-1 4 3 103 abcd electronics
-3 0 3 402 zzzz kkkk
-3 4 8 504 5312 helloWorld
+0 0
+4227140
