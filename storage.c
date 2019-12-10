@@ -119,7 +119,7 @@ int str_backupSystem(char* filepath) {		//현재 보관함들의 상태 및 설정 값들을 파
 	{
 		for(j = 0; j< systemSize[1]; i++)
 		{
-			fprintf(fp,"%d %d %d %d %s %s\n",i,j,room, passwd, *context);  //fprintf 사용해서 다시 파일 쓰기
+			fprintf(fp,"%d %d %d %d %s %s\n",i,j,room, passwd, *context);  //fprintf 사용해서 다시 파일 쓰기 
 		}
  	}
 
@@ -161,18 +161,18 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 	//fp = fopen(*filepath,"r");
 	
 	fscanf(fp, "%d %d",&systemSize[0],&systemSize[1]); 
-	fcanf(fp,"%s", masterPassword);
+	fscanf(fp,"%s", masterPassword);
 	
-	while(fgetc(FILE *fp) != EOF)/*파일이  끝날 때 까지 */
+	while(fgetc(fp) != EOF)/*파일이  끝날 때 까지 */     //fgetc를 이용해서 파일로부터 한 문자씩 입력받는다.  
 	{
-		fscanf(fp,"%d %d ",&x,&y) ;
-		fscanf(fp,"%d %d ",&deliverySystem[x][y].building,&deliverySystem[x][y].room);
-		fscanf(fp,"%d", &deliverySystem[x][y].passwd);
-		fscanf(fp,"%s",&deliverySystem[x][y].context);
+		fscanf(fp,"%d %d ",&x,&y) ;     //행과 열을 나타낼 x,y를 받아주고
+		fscanf(fp,"%d %d ",&deliverySystem[x][y].building,&deliverySystem[x][y].room);  // 건물(동)과 room번호를 받아주기  
+		fscanf(fp,"%d", &deliverySystem[x][y].passwd); //passwd를 받아주기  
+		fscanf(fp,"%s",&deliverySystem[x][y].context); //context를 받아주기  
 		
 		//위와 같이 비밀먼호, context받아주기 
 		//while문 돌아갈때마다 
-		storedCnt++; 
+		storedCnt++;     //위에 처럼 행,열, 건물(동), room번호, passwd,context 모두 입력받으면 저장된 package가 하나 늘어남  
 		
 	}
 	

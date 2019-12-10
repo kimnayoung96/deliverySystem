@@ -97,7 +97,8 @@ int main(int argc, char *argv[]) {
 				y = getIntegerInput();
 				if (str_checkStorage(x,y) != 0)
 				{
-					printf(" -----------> Storage (%i,%i) is already occupied or invalid!\n", x, y);
+				//	printf(" -----------> Storage (%i,%i) is already occupied or invalid!\n", x, y);
+				printf(" -----------> Storage (%i,%i) is already occupied or invalid! cnt = %i\n", x, y,str_checkStorage(x,y));
 					continue;
 				}
 				
