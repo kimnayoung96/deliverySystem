@@ -117,9 +117,9 @@ int str_backupSystem(char* filepath) {		//현재 보관함들의 상태 및 설정 값들을 파
 	{
 		for(j = 0; j< systemSize[1]; j++)
 		{
-			if(deliverySystem[i][j].cnt!=0)
+			if(deliverySystem[i][j].cnt!=0)   //fprint 사용해서 다시 파일 쓰기  
 			{
-				fprintf(fp,"%d %d %d %d %s %s\n",i,j,deliverySystem[i][j].building,deliverySystem[i][j].room, deliverySystem[i][j].passwd,deliverySystem[i][j].context);  //fprintf 사용해서 다시 파일 쓰기 
+				fprintf(fp,"%d %d %d %d %s %s\n",i,j,deliverySystem[i][j].building,deliverySystem[i][j].room, deliverySystem[i][j].passwd,deliverySystem[i][j].context);   
 			}
 			
 		}
@@ -219,35 +219,6 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 }
 
 	
-	//context도 동적할당 
-/*	for(i=0; i<systemSize[0] ; i++)
-	{
-		for(j=0;j<systemSize[1];j++)
-		{
-			deliverySystem[i][j].context       //이걸 동적할당  
-		}
-	} 
-*/	
-/*	if(fp == NULL){
-		
-		return;
-	}
-	
-	deliverySystem -> 
-	strcpy(deliverySystem -> systemSize[0],"")
-	
-		
-	if()
-	{
-		return 0;             //택배보관함 구조체 자료구조가 성공적으로 생성되었다면 return 0 
-	}
-	else if()
-	{
-		return -1;            //택배보관함 구조체 자료구조 생성에 실패했다면 return -1 
-	}
-	
-	*/
-
 
 //free the memory of the deliverySystem 
        //str_createSystem(cahr *filepath)함수의 경우에는 먼저 입력으로 들어온 filepath에 해당하는 파일을 
@@ -316,7 +287,7 @@ int str_checkStorage(int x, int y) {
 		return -1;
 	}
 	
-	return deliverySystem[x][y].cnt;	//
+	return deliverySystem[x][y].cnt;	
 }
 
 
@@ -335,10 +306,10 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 	int i;
 	 
 	//어디에 넣을 것인지 입력하고 나면 그 자리에 들어갈 수 있는지 먼저 확인				        //뭔가 들어있으면 1,비어있으면 0으로 생각  
-	//if(deliverySystem[x][y] == NULL)               //내가 넣고자 하는 보관함이 비어있다면   
-	if(deliverySystem[x][y].cnt == 0) // 
+	//if(deliverySystem[x][y] == NULL)                
+	if(deliverySystem[x][y].cnt == 0)  //내가 넣고자 하는 보관함이 비어있다면 
 	{	
-		deliverySystem[x][y].building=nBuilding;   //내가 입력한 building#가 txt파일에 쓰여지고 
+		deliverySystem[x][y].building=nBuilding;   //내가 입력한 building #가 txt파일에 쓰여지고 
 		deliverySystem[x][y].room=nRoom;       //내가 입력한 room #가 txt파일에 쓰여지고  
 	 	deliverySystem[x][y].context=msg;        //내가 입력한 message가 txt파일에 쓰여지고  
 		//!!!!!deliverySystem[x][y].passwd[PASSWD_LEN+1]=passwd;	 //내가 입력한 passwd가 txt파일에 쓰여짐
@@ -348,28 +319,14 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 			strcpy(deliverySystem[x][y].context, passwd);
 		} 
 	
-/*	deliverySystem[0][0].passwd = 1234;
-		strcpy((deliverySystem[0][0].context), "noPassword");
-		
-		deliverySystem[0][2].passwd = 3923;
-		strcpy((deliverySystem[0][2].context)-> "sookmyung");
-		
-		deliverySystem[1][4].passwd = abcd;
-		strcpy((deliverySystem[1][4].context)-> "electronics");
-			
-		deliverySystem[2][3].passwd = hihi;
-		strcpy((deliverySystem[2][3].context)-> "programming");
-		
-		deliverySystem[3][4]].passwd = 5312;
-		strcpy((deliverySystem[3][4].context)-> "helloWorld");
-*/		
+
 	
-		deliverySystem[x][y].cnt++;      //성공적으로 택배가 넣어졌다면  
+		deliverySystem[x][y].cnt++;      //성공적으로 택배가 넣어졌으니까 +1해주기  
 		
 		return 0;                   //만약 성공적으로 택배보관함에 택배가 넣어졌다면 return 0
 	
 	}
-	//else if(deliverySystem[x][y] != NULL)         //내가 넣고자 하는 보관함이 이미 차있다면   
+  
 	else 
 	{
 		return -1;                 //택배보관함에 택배가 성공적으로 들어가지 않았다면 return -1 
@@ -387,17 +344,17 @@ int str_extractStorage(int x, int y) {		//특정 보관함에서 내 택배 꺼냄
 	
 	
 	//비밀번호 처리 과정과 택배 보낼 때 문구 뜨게하기    
-	//if(inputPasswd(int x, int y) !=  0 )             //내가 입력한 passwd가 틀리면  
-	if(inputPasswd(x,y) != 0)
+	//if(inputPasswd(int x, int y) !=  0 )               
+	if(inputPasswd(x,y) != 0)      //내가 입력한 passwd가 틀리면
 	{
-		printf("------------>password is wrong!!\n");
+		printf("------------>password is wrong!!\n");          //사용자가 입력한 password가 틀렸다는 문구가 출력됨  
 		return -1;
 		
 	}
  	else                                            //내가 입력한 passwd가 맞으면  
  	{	
  		printStorageInside(x, y);  
-		initStorage(x,y);          
+		initStorage(x,y);          					//extractStorage를 해주면 storage 하나가 비워주기까 initStorage해주기!!  
 		storedCnt--;                               //저장되어있던 보관함 하나가 비워지니까 -1해주기  
 		return 0;
 	}		
@@ -409,9 +366,7 @@ int str_extractStorage(int x, int y) {		//특정 보관함에서 내 택배 꺼냄
 //int nBuilding, int nRoom : my building/room numbers
 //return : number of packages that the storage system has
 int str_findStorage(int nBuilding, int nRoom) {		//내 택배가 있는 보관함 찾기  
-	//building #, 즉 몇 동인지를 먼저 입력
-	//room#,즉 몇 호인지를 입력해야함
-	  //여기서 만약 내가 이상한 곳을 입력하면 "-----------> Failed to extract my package!"가 출력됨 :이건 모두 main에서짜여짐
+	
 	
 	int i,j;
 	int x,y;
