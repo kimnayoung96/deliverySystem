@@ -117,12 +117,17 @@ int str_backupSystem(char* filepath) {		//현재 보관함들의 상태 및 설정 값들을 파
 	{
 		for(j = 0; j< systemSize[1]; j++)
 		{
-			fprintf(fp,"%d %d %d %d %s %s\n",i,j,room, passwd, *context);  //fprintf 사용해서 다시 파일 쓰기 
+			if(deliverySystem[i][j].cnt!=0)
+			{
+				fprintf(fp,"%d %d %d %d %s %s\n",i,j,deliverySystem[i][j].building,deliverySystem[i][j].room, deliverySystem[i][j].passwd,deliverySystem[i][j].context);  //fprintf 사용해서 다시 파일 쓰기 
+			}
+			
 		}
  	}
 
 	fclose(fp); //파일 포인터 닫기  
-	 
+	
+	return 0;
 	
 }
 
@@ -340,7 +345,7 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 		
 		//deliverySystem[i].passwd;
 		for(i=0 ; i<deliverySystem[i] ; i++) {
-			strcpy(deliverySystem[x][y].context, passwd[PASSWD_LEN+1]);
+			strcpy(deliverySystem[x][y].context, passwd);
 		} 
 	
 /*	deliverySystem[0][0].passwd = 1234;
@@ -383,7 +388,7 @@ int str_extractStorage(int x, int y) {		//특정 보관함에서 내 택배 꺼냄
 	
 	//비밀번호 처리 과정과 택배 보낼 때 문구 뜨게하기    
 	//if(inputPasswd(int x, int y) !=  0 )             //내가 입력한 passwd가 틀리면  
-	if(inputPasswd != 0)
+	if(inputPasswd(x,y) != 0)
 	{
 		printf("------------>password is wrong!!\n");
 		return -1;
@@ -391,7 +396,8 @@ int str_extractStorage(int x, int y) {		//특정 보관함에서 내 택배 꺼냄
 	}
  	else                                            //내가 입력한 passwd가 맞으면  
  	{	
- 		printStorageInside(x, y);            
+ 		printStorageInside(x, y);  
+		initStorage(x,y);          
 		storedCnt--;                               //저장되어있던 보관함 하나가 비워지니까 -1해주기  
 		return 0;
 	}		
@@ -413,18 +419,25 @@ int str_findStorage(int nBuilding, int nRoom) {		//내 택배가 있는 보관함 찾기
 	
 	deliverySystem[x][y].building;      
 	
-	
-	if(deliverySystem[x][y].building == nBuilding)       //내가 입력한 동과 같은 건물이면 
-	{ 
-		deliverySystem[x][y].room;	  
-		printf("------------>Found package in (%d,%d)\n",systemSize[i],systemSize[j]);
+	for(i=0;i<systemSize[0];i++)
+	{
+		for(j=0;j<systemSize[1];j++)
+		{
+			if(deliverySystem[i][j].building == nBuilding&&deliverySystem[i][j].room==nRoom)       //내가 입력한 동과 같은 건물이면 
+			{ 
+				//deliverySystem[x][y].room;	  
+				printf("------------>Found package in (%d,%d)\n",i,j);
+				cnt++;
 		//deliverySystem[x][y]++;
+			}
+		}
 	}
+
 	
-	else  // if(deliverySystem[x][y] != nBuilding)
+	/*else  // if(deliverySystem[x][y] != nBuilding)
 	{
 		deliverySystem[x][y].room;
-	}
+	}*/
 	
 	
 	return cnt;
