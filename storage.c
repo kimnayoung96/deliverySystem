@@ -54,8 +54,10 @@ static void initStorage(int x, int y) {              //특정 보관함 하나를 초기화
 //	int systemsize[0] = NULL; //storage를 초기화
 	//int i,j;
 	 	int i;
-	//구조체 안에 들어있는 것 모두 0으로 초기화 시켜주기  
+	 	
+	 	
 	
+	//Initialize to 0  
 			deliverySystem[x][y].building = 0;
 			deliverySystem[x][y].room = 0;
 			deliverySystem[x][y].cnt = 0;
@@ -63,11 +65,13 @@ static void initStorage(int x, int y) {              //특정 보관함 하나를 초기화
 			
 			for(i=0; i<(PASSWD_LEN+1);i++)
 			{
-				deliverySystem[x][y].passwd[i] = '0'; // 5글자를 받아와도 conext는 char로 가져오기 때문에 크기를 5로 설정해도 4개만 가져오고 마지막은 NULL로!  
+				deliverySystem[x][y].passwd[i] = '0';   
 			}
-			//strcpy(deliverySystem[x][y].context,"electronic");
-			//strcpy(deliverySystem[x][y].context,"initialize");
+			
 			deliverySystem[x][y].cnt = 0;
+			
+		
+		
 		
 }
 
@@ -76,19 +80,21 @@ static void initStorage(int x, int y) {              //특정 보관함 하나를 초기화
 //return : 0 - password is matching, -1 - password is not matching
 static int inputPasswd(int x, int y) {             //특정 보관함에 대해 비밀번호를 입력 받아서 맞는지 확인
 	char userPasswd[PASSWD_LEN+1]; 
+	
 	printf("-Input Password for (%d,%d) storage: ",x,y);
-	  //사용자가 입력한 passwd를 userPasswd 로 선언하고  
-	scanf("%4s",&userPasswd);       //사용자가 입력한 passwd에서 4글자만 가져오기  
+	
+	//사용자가 입력한 passwd를 userPasswd 로 선언하고  
+	scanf("%4s",&userPasswd);       // Import only 4 characters from the password you entered
 	
 	
 	
-	if(strcmp(userPasswd,deliverySystem[x][y].passwd)==0||strcmp(userPasswd,masterPassword)==0) // userPasswd랑  passwd랑 같은지 비교하고, userPasswd랑 masterPasswd랑 같은지                                                                                               //비교해서 만약 같다면  retuen 0
+	if(strcmp(userPasswd,deliverySystem[x][y].passwd)==0||strcmp(userPasswd,masterPassword)==0) // compare userPasswd with  passwd and compare userPasswd with masterPasswd                                                                                              //비교해서 만약 같다면  retuen 0
 	{
-		return 0;
+		return 0;   //if so return 0 
 	}
 	else
 	{
-		return -1;																		      //위의 경우가 아니라면 return -1 
+		return -1;			//if not return -1
 	}
 	
 	
@@ -115,25 +121,25 @@ int str_backupSystem(char* filepath) {		//현재 보관함들의 상태 및 설정 값들을 파
 	FILE *fp;
 	
 	
-	fp = fopen(filepath, "w");  //쓰기 모드로 열어서  
+	fp = fopen(filepath, "w");  //open in write mode  
 	
 	
 	fprintf(fp,"%d %d\n",systemSize[0],systemSize[1]); //우선 첫 행에 행과 열을 출력 
-	fprintf(fp,"%s\n",masterPassword);                 //masterPasswd를 출력  
+	fprintf(fp,"%s\n",masterPassword);                 //print masterPasswd  
 	
 	for(i = 0; i < systemSize[0] ; i++ )
 	{
 		for(j = 0; j< systemSize[1]; j++)
 		{
 			if(deliverySystem[i][j].cnt!=0)   
-			{	//fprint 사용해서 다시 파일 쓰기 (building, room, passwd, context)				
+			{	//Re-write files using fprintf (building, room, passwd, context)				
 				fprintf(fp,"%d %d %d %d %s %s\n",i,j,deliverySystem[i][j].building,deliverySystem[i][j].room, deliverySystem[i][j].passwd,deliverySystem[i][j].context);   
 			}
 			
 		}
  	}
 
-	fclose(fp); //파일 포인터 닫기  
+	fclose(fp); //close fp  
 	
 	return 0;
 	
@@ -148,104 +154,76 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 
 	FILE *fp;
 	
-	fp = fopen(filepath,"r");		//파일을 읽기모드로 연다  
+	fp = fopen(filepath,"r");		//open file in read mode 
 	
-	int x,y;//x:row y:column
+	int x,y;		//x:row y:column
 	
 	int i,j;
 	char *context,c;
 	int cnt;
 		
 	
-	fscanf(fp, "%d %d",&systemSize[0],&systemSize[1]); //첫번째 행과 열을 받아온다. 
-	fscanf(fp,"%s", masterPassword); //masterPassword를 받아온다.  
+	fscanf(fp, "%d %d",&systemSize[0],&systemSize[1]); 		//Bring up the row and column 
+	fscanf(fp,"%s", masterPassword);     					//Bring up the masterPassword  
 	
-	//cnt 메모리 할당
-	//cnt = (int*)malloc(deliverySystem[x][y].cnt*sizeof(int));
-
-	
-	//////////////////////////////////////////
-	//context에 동적할당  
-	//context = (char*)malloc(100*sizeof(char));   
+	  
 	
 	//  첫 행 정도(4,6)을 받아들인 다음에  그 크기만큼 storage_t  크기의 공간을 동적으로 할당받기 
-	deliverySystem = (storage_t **)malloc(systemSize[0]*sizeof( storage_t*));         	  //system[0](row)에 동적할당  
+	deliverySystem = (storage_t **)malloc(systemSize[0]*sizeof( storage_t*));         	  //Dynamic Allocation to system[0](row)
 	
 	for(i=0; i<systemSize[0] ; i++)
 	{
-		deliverySystem[i]= ( storage_t *)malloc(systemSize[1]*sizeof( storage_t ));			 //system[1](column)에 동적할당  
-	//	deliverySystem[i] = ( storage_t *)malloc(systemSize[1]*sizeof( storage_t ));			 
+		deliverySystem[i]= ( storage_t *)malloc(systemSize[1]*sizeof( storage_t ));			 //Dynamic Allocation to system[1](column)  
+			 
 	}
-	//context에 동적할당  
+	
+	//Dynamic Allocation to context  
 	context = (char*)malloc(100*sizeof(char));   
 	
 	for(i = 0; i<systemSize[0]; i++)
 	{
 		for(j=0; j<systemSize[1]; j++)
 		{
-			//deliverySystem[i][j].cnt = 0;         
+			        
 			initStorage(i,j);
 		}
 	}
 	
-	//FILE fp;
 	
-	//fp = fopen(*filepath,"r");
-	
-//	fscanf(fp, "%d %d",&systemSize[0],&systemSize[1]); 
-//	fscanf(fp,"%s", masterPassword);
-	
-//	while(EOF!=fscanf(fp, "%s", &c)
-   //(파일이 끝날 때까지)fgetc를 이용해서 파일로부터 한 문자씩 입력받는다.  
-//	while()
-	while(EOF!=fscanf(fp,"%d %d ",&x,&y))
+	//To prevent the last value of the value read by fScanf from being read twice, check if the value of fscanf is the value of EOF
+	while(EOF!=fscanf(fp,"%d %d ",&x,&y))     //If the return value of fscanf is not EOF  
 	{	
-//		if(feof(fp)!=0)
-//		{
-//			break;
-//		}
-			//printf("fgetc = %c",fgetc(fp));
-		//fscanf(fp,"%d %d ",&x,&y) ;     //행과 열을 나타낼 x,y를 받아주고  ;
-		//printf("x = %d y = %d\n",x,y);
-		fscanf(fp,"%d %d ",&deliverySystem[x][y].building, &deliverySystem[x][y].room);  // 건물(동)과 room번호를 받아주기  
-		//printf("building= %d room = %d\n",deliverySystem[x][y].building,deliverySystem[x][y].room);
-		fscanf(fp,"%4s", deliverySystem[x][y].passwd); //passwd를 받아주기  
-		//printf("deliverySystem[x][y].passwd= %s\n",deliverySystem[x][y].passwd);
-			
+		
+		fscanf(fp,"%d %d ",&deliverySystem[x][y].building, &deliverySystem[x][y].room);  // receive building number and room number
+		fscanf(fp,"%4s", deliverySystem[x][y].passwd); 									//receive passwd  
+		
 			deliverySystem[x][y].context = (char*)malloc(100*sizeof(char));
 		
-		fscanf(fp,"%s",deliverySystem[x][y].context); //context를 받아주기 
-		//printf("context = %s \n",deliverySystem[x][y].context) ;
-		
-		//	deliverySystem[x][y].cnt = (int*)malloc(sizeof(int));
+		fscanf(fp,"%s",deliverySystem[x][y].context);                                   //receive context 
+	
 
-			  
 		deliverySystem[x][y].cnt++;   
-		//printf("context= %s \n",deliverySystem[x][y].context);
 		
-		//위와 같이 비밀먼호, context받아주기 
-		//while문 돌아갈때마다 
-		storedCnt++;     //위에 처럼 행,열, 건물(동), room번호, passwd,context 모두 입력받으면 저장된 package가 하나 늘어남  
-	//	printf("fgetc = %c",fgetc(fp));
+		 
+		storedCnt++;    //when the while문  rotates, storedCnt becomes +1
+		  
+	
 		
 	}
 	
-	fclose(fp);	//파일 포인터 닫기  
+	fclose(fp);	//close fp 
 	
 	return 0;
 }
 
 	
 
-//free the memory of the deliverySystem 
-       //str_createSystem(cahr *filepath)함수의 경우에는 먼저 입력으로 들어온 filepath에 해당하는 파일을 
-                 //입출력 함수를 이용해서  읽어들이고 그 안에서 deliverSystem의 크기에 해당하는
-				    
+//free the memory of the deliverySystem 			    
 void str_freeSystem(void) {		//택배보관함 자료구조 메모리 해제  
 	int i,j;
 
 	
-	//context포인터에 대해서 메모리 해제  
+	//Turn off memory for context 
 	for(i = 0; i< systemSize[0]; i++)
 	{
 		for(j=0; j< systemSize[1]; j++)
@@ -317,38 +295,35 @@ int str_checkStorage(int x, int y) {
 //return : 0 - successfully put the package, -1 - failed to put
 int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_SIZE+1], char passwd[PASSWD_LEN+1]) { //특정 보관함에 택배 넣기 
 	
-	//char msg[MAX_MSG_SIZE+1];
-	//char passwd[PASSWD_LEN+1];
-	
+
 	int i;
 	 
-	//어디에 넣을 것인지 입력하고 나면 그 자리에 들어갈 수 있는지 먼저 확인				        //뭔가 들어있으면 1,비어있으면 0으로 생각  
-	//if(deliverySystem[x][y] == NULL)                
-	if(deliverySystem[x][y].cnt == 0)  //내가 넣고자 하는 보관함이 비어있다면 
+	//After entering where to put it, first check if the package can be pushed to the storage 			        
+	if(deliverySystem[x][y].cnt == 0)  //If the storage box I'm trying to put in is empty 
 	{	
 		
-		deliverySystem[x][y].building=nBuilding;   //내가 입력한 building #가 txt파일에 쓰여지고 
-		deliverySystem[x][y].room=nRoom;       //내가 입력한 room #가 txt파일에 쓰여지고  
-	 	deliverySystem[x][y].context=msg;        //내가 입력한 message가 txt파일에 쓰여지고  
-		//!!!!!deliverySystem[x][y].passwd[PASSWD_LEN+1]=passwd;	 //내가 입력한 passwd가 txt파일에 쓰여짐
+		deliverySystem[x][y].building=nBuilding;  //The building I entered is written to the txt file
+		deliverySystem[x][y].room=nRoom;      //The room I entered is written to the txt file 
+	 	deliverySystem[x][y].context=msg;       // The context I entered is written to the txt file
 		
-		//deliverySystem[i].passwd;
-		for(i=0 ; i<(PASSWD_LEN+1) ; i++) {
-			//strcpy(deliverySystem[x][y].passwd, passwd[i]);
-			deliverySystem[x][y].passwd[i]=passwd[i];
+		
+		//The passwd I entered is written to the txt file
+		for(i=0 ; i<(PASSWD_LEN+1) ; i++)
+		{						
+				deliverySystem[x][y].passwd[i]=passwd[i];
 		} 
 	
 
 	
-		deliverySystem[x][y].cnt++;      //성공적으로 택배가 넣어졌으니까 +1해주기  
-		
-		return 0;                   //만약 성공적으로 택배보관함에 택배가 넣어졌다면 return 0
+		deliverySystem[x][y].cnt++;      //+1 because the parcel was successfully delivered  
+		storedCnt++;
+		return 0;                  //If the parcel is successfully placed in the storage, return 0
 	
 	}
   
 	else 
 	{
-		return -1;                 //택배보관함에 택배가 성공적으로 들어가지 않았다면 return -1 
+		return -1;                 //If the parcel is not successfully placed in the storage, return 0
 	}
 }
 
@@ -361,18 +336,18 @@ int str_pushToStorage(int x, int y, int nBuilding, int nRoom, char msg[MAX_MSG_S
 int str_extractStorage(int x, int y) {		//특정 보관함에서 내 택배 꺼냄 
 	
 	//비밀번호 처리 과정과 택배 보낼 때 문구 뜨게하기    
-	//if(inputPasswd(int x, int y) !=  0 )               
-	if(inputPasswd(x,y) != 0)      //내가 입력한 passwd가 틀리면
+              
+	if(inputPasswd(x,y) != 0)      //If the passwd I typed is wrong
 	{
 		printf("------------>password is wrong!!\n");          //사용자가 입력한 password가 틀렸다는 문구가 출력됨  
 		return -1;
 		
 	}
- 	else                                            //내가 입력한 passwd가 맞으면  
+ 	else                                            //If the passwd I typed is right  
  	{	
  		printStorageInside(x, y);  
-		initStorage(x,y);          					//extractStorage를 해주면 storage 하나가 비워주기까 initStorage해주기!!  
-		storedCnt--;                               //저장되어있던 보관함 하나가 비워지니까 -1해주기  
+		initStorage(x,y);          					//exactStorage will empty one storage so initialize the components in struct(구조체)  
+		storedCnt--;                               //Because one of the storage will be empty,StoredCnt -1  
 		return 0;
 	}		
 
@@ -395,21 +370,17 @@ int str_findStorage(int nBuilding, int nRoom) {		//내 택배가 있는 보관함 찾기
 	{
 		for(j=0;j<systemSize[1];j++)
 		{
-			if(deliverySystem[i][j].building == nBuilding&&deliverySystem[i][j].room==nRoom)       //내가 입력한 동과 같은 건물인지와 내가 입력한 room number와 같은 방이라면   
+			if(deliverySystem[i][j].building == nBuilding&&deliverySystem[i][j].room==nRoom)  //If the building and nBuilding I entered are the same and if the room and nroom I entered are the same
 			{ 
-				//deliverySystem[x][y].room;	  
+					  
 				printf("------------>Found package in (%d,%d)\n",i,j);         //택배 찾았다는 문구 출력  
 				cnt++;
-		//deliverySystem[x][y]++;
+		
 			}
 		}
 	}
 
 	
-	/*else  // if(deliverySystem[x][y] != nBuilding)
-	{
-		deliverySystem[x][y].room;
-	}*/
 	
 	
 	return cnt;
