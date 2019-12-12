@@ -199,7 +199,7 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 		
 			deliverySystem[x][y].context = (char*)malloc(100*sizeof(char));
 		
-		fscanf(fp,"%s",deliverySystem[x][y].context);                                   //receive context 
+		fscanf(fp,"%s",deliverySystem[x][y].context);                                    //receive context 
 	
 
 		deliverySystem[x][y].cnt++;   
