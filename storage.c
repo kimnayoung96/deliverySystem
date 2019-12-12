@@ -59,7 +59,7 @@ static void initStorage(int x, int y) {              //특정 보관함 하나를 초기화
 			deliverySystem[x][y].building = 0;
 			deliverySystem[x][y].room = 0;
 			deliverySystem[x][y].cnt = 0;
-			deliverySystem[x][y].passwd[PASSWD_LEN+1] = 0;
+			deliverySystem[x][y].passwd[5] = 0; // 5글자를 받아와도 conext는 char로 가져오기 때문에 크기를 5로 설정해도 4개만 가져오고 마지막은 NULL로!  
 			deliverySystem[x][y].context = 0;
 		
 }
@@ -111,7 +111,7 @@ int str_backupSystem(char* filepath) {		//현재 보관함들의 상태 및 설정 값들을 파
 	
 	
 	fprintf(fp,"%d %d\n",systemSize[0],systemSize[1]); //우선 첫 행에 행과 열을 출력 
-	fprintf(fp,"%d\n",masterPassword);                 //masterPasswd를 출력  
+	fprintf(fp,"%s\n",masterPassword);                 //masterPasswd를 출력  
 	
 	for(i = 0; i < systemSize[0] ; i++ )
 	{
@@ -140,12 +140,12 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 
 	FILE *fp;
 	
-	fp = fopen(filepath,"r");
+	fp = fopen(filepath,"r");		
 	
 	int x,y;//x:row y:column
 	
 	int i,j;
-	char *context;
+	char *context,c;
 	int cnt;
 		
 	
@@ -185,7 +185,7 @@ int str_createSystem(char* filepath) {		//택배보관함 구조체 자료구조 생성
 //	fscanf(fp, "%d %d",&systemSize[0],&systemSize[1]); 
 //	fscanf(fp,"%s", masterPassword);
 	
-	while( fgetc(fp) != EOF)/*파일이  끝날 때 까지 */     //fgetc를 이용해서 파일로부터 한 문자씩 입력받는다.  
+	while(fgetc(fp) != EOF)/*파일이  끝날 때 까지 */     //fgetc를 이용해서 파일로부터 한 문자씩 입력받는다.  
 	{	
 			//printf("fgetc = %c",fgetc(fp));
 		fscanf(fp,"%d %d ",&x,&y) ;     //행과 열을 나타낼 x,y를 받아주고  
